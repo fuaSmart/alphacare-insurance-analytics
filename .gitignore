@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.ipynb
+.ipynb_checkpoints
+
+# Data files (IMPORTANT: Do NOT commit raw downloaded data to Git directly)
+*.csv
+*.xlsx
+*.parquet
+*.db
+data/ # A common folder for raw/processed data
+
+# IDE / OS specific files
+.DS_Store
+.vscode/
+Thumbs.db
+
+# Model files (for later tasks)
+*.pkl
+*.joblib
+*.h5

@@ -128,7 +128,12 @@ if 'Gender' in df.columns:
     plt.close()
 
 
+<<<<<<< HEAD
 # Correlations and Associations 
+=======
+# Correlations and Associations (monthly changes TotalPremium vs TotalClaims by ZipCode)
+# This requires aggregation by month and zipcode first
+>>>>>>> task-1
 if 'TransactionDate' in df.columns and 'PostalCode' in df.columns:
     monthly_data = df.set_index('TransactionDate').resample('M').agg(
         TotalPremium=('TotalPremium', 'sum'),
@@ -175,6 +180,10 @@ for col in ['TotalPremium', 'TotalClaims', 'CustomValueEstimate']:
         plt.close()
         print(f"Generated box plot for {col}.")
 
+<<<<<<< HEAD
 print("\n--- EDA Analysis Complete. Check 'plots/eda/' directory for generated plots. ---")
 
 
+=======
+print("\n--- EDA Analysis Complete. Check 'plots/eda/' directory for generated plots. ---")
+>>>>>>> task-1
