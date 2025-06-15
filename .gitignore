@@ -11,6 +11,7 @@ venv/
 *.xlsx
 *.parquet
 *.db
+*.dvc/
 data/ # A common folder for raw/processed data
 
 # IDE / OS specific files
