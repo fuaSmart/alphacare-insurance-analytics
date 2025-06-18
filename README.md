@@ -129,33 +129,21 @@ This task focuses on establishing a reproducible and auditable data pipeline, a 
 
 This DVC setup ensures that our data inputs are rigorously version-controlled, allowing for full reproducibility of all analysis and model results, a critical requirement for auditing and regulatory compliance in the insurance domain.
 
-## Task 3: A/B Hypothesis Testing
-
-Task 3 involved statistically validating key hypotheses about car insurance risk drivers. This rigorous A/B testing approach is crucial for establishing data-backed foundations for AlphaCare's new segmentation and marketing strategies.
-
-### 3.1 Key Metrics Defined
-
-For this analysis, "risk" and "profitability" were quantified using the following metrics:
-
-- **Claim Frequency**: Defined as the proportion of policies that incurred at least one claim. This is a binary metric (0 = no claim, 1 = claim occurred).
-  $$ \text{Claim Frequency} = \frac{\text{Number of Policies with Claims}}{\text{Total Number of Policies}} $$
-- **Claim Severity**: Defined as the average amount of a claim, calculated _only for policies where a claim actually occurred_ ($\text{TotalClaims} > 0$).
-  $$ \text{Claim Severity} = \frac{\text{Total Claims Amount}}{\text{Number of Policies with Claims}} \quad (\text{for policies with } \text{TotalClaims} > 0) $$
-- **Margin (Profit)**: Defined as the direct profitability per policy, calculated as the difference between the total premium received and the total claims paid.
-  $$ \text{Margin} = \text{TotalPremium} - \text{TotalClaims} $$
-
 ### 3.2 Methodology: Statistical Testing
 
 For each null hypothesis ($\text{H}_0$), a segmentation approach was applied to create comparison groups (analogous to A/B testing's control and test groups). Appropriate statistical tests were then conducted to evaluate the impact of the tested features on the defined KPIs. A significance level (alpha, $\alpha$) of 0.05 was consistently used.
 
-- **For Categorical Outcomes (e.g., Claim Frequency)**: The **Chi-squared ($\chi^2$) test for independence** was employed. This test determines if there's a statistically significant association between two categorical variables (e.g., Province and Claim Occurred).
+* **For Categorical Outcomes (e.g., Claim Frequency)**: The **Chi-squared (**$\chi^2$**) test for independence** was employed. This test determines if there's a statistically significant association between two categorical variables (e.g., Province and Claim Occurred).
 
-  - If $\text{p-value} < 0.05$: The null hypothesis is **rejected**, suggesting a statistically significant difference in claim frequency between the groups.
-  - If $\text{p-value} \ge 0.05$: We **fail to reject** the null hypothesis, suggesting no statistically significant difference.
+  * If $\text{p-value} < 0.05$: The null hypothesis is **rejected**, suggesting a statistically significant difference in claim frequency between the groups.
 
-- **For Numerical Outcomes (e.g., Claim Severity, Margin)**: The **Independent Samples t-test (specifically Welch's t-test)** was used. This test compares the means of two independent groups to determine if they are significantly different. Welch's t-test is robust to unequal variances between groups, which is common in real-world data.
-  - If $\text{p-value} < 0.05$: The null hypothesis is **rejected**, suggesting a statistically significant difference in the mean of the numerical metric (Claim Severity or Margin) between the groups.
-  - If $\text{p-value} \ge 0.05$: We **fail to reject** the null hypothesis, suggesting no statistically significant difference.
+  * If $\text{p-value} \ge 0.05$: We **fail to reject** the null hypothesis, suggesting no statistically significant difference.
+
+* **For Numerical Outcomes (e.g., Claim Severity, Margin)**: The **Independent Samples t-test (specifically Welch's t-test)** was used. This test compares the means of two independent groups to determine if they are significantly different. Welch's t-test is robust to unequal variances between groups, which is common in real-world data.
+
+  * If $\text{p-value} < 0.05$: The null hypothesis is **rejected**, suggesting a statistically significant difference in the mean of the numerical metric (Claim Severity or Margin) between the groups.
+
+  * If $\text{p-value} \ge 0.05$: We **fail to reject** the null hypothesis, suggesting no statistically significant difference.
 
 The analysis involved comparing the most prevalent categories for features with more than two classes (e.g., selecting the top two provinces/zip codes by policy volume for comparison).
 
@@ -163,51 +151,180 @@ The analysis involved comparing the most prevalent categories for features with 
 
 The `hypothesis_testing.py` script was executed to perform the outlined statistical tests. Below are the findings for each null hypothesis:
 
-#### Hypothesis 1: $H_0$: There are no risk differences across provinces.
+#### Hypothesis 1$H_0$: There are no risk differences across provinces.
 
-- **Claim Frequency**:
+* **Claim Frequency**:
 
-  - **Result**: [**State your p-value here, e.g., p = 0.0001**]
-  - **Conclusion**: [**Reject/Fail to Reject H0**]
-  - **Business Recommendation**: [**Based on your script's output, interpret the result. E.g., "We reject the null hypothesis ($p < 0.01$). Our analysis shows that policies in [Province A, e.g., Gauteng] have a significantly higher claim frequency (X%) compared to policies in [Province B, e.g., Western Cape] (Y%). This strongly indicates that geographical location is a key risk differentiator. AlphaCare should consider implementing a regional risk adjustment factor in its premium pricing strategy to better reflect provincial risk profiles."**]
+  * **Result**: \[**State your p-value here, e.g., p = 0.0001**\]
 
-- **Claim Severity**:
-  - **Result**: [**State your p-value here, e.g., p = 0.15**]
-  - **Conclusion**: [**Reject/Fail to Reject H0**]
-  - **Business Recommendation**: [**Based on your script's output, interpret the result. E.g., "We fail to reject the null hypothesis ($p > 0.05$). While there may be minor differences, the statistical evidence does not support a significant difference in the average claim amount (severity) between policies in [Province A] and [Province B]. Therefore, focusing solely on claim severity for provincial premium adjustments may not be justified based on this dataset."**]
+  * **Conclusion**: \[**Reject/Fail to Reject H0**\]
+
+  * **Business Recommendation**: \[**Based on your script's output, interpret the result. E.g., "We reject the null hypothesis (**$p < 0.01$**). Our analysis shows that policies in \[Province A, e.g., Gauteng\] have a significantly higher claim frequency (X%) compared to policies in \[Province B, e.g., Western Cape\] (Y%). This strongly indicates that geographical location is a key risk differentiator. AlphaCare should consider implementing a regional risk adjustment factor in its premium pricing strategy to better reflect provincial risk profiles."**\]
+
+* **Claim Severity**:
+
+  * **Result**: \[**State your p-value here, e.g., p = 0.15**\]
+
+  * **Conclusion**: \[**Reject/Fail to Reject H0**\]
+
+  * **Business Recommendation**: \[**Based on your script's output, interpret the result. E.g., "We fail to reject the null hypothesis (**$p > 0.05$**). While there may be minor differences, the statistical evidence does not support a significant difference in the average claim amount (severity) between policies in \[Province A\] and \[Province B\]. Therefore, focusing solely on claim severity for provincial premium adjustments may not be justified based on this dataset."**\]
 
 #### Hypothesis 2: $H_0$: There are no risk differences between zip codes.
 
-- **Claim Frequency**:
+* **Claim Frequency**:
 
-  - **Result**: [**State your p-value here**]
-  - **Conclusion**: [**Reject/Fail to Reject H0**]
-  - **Business Recommendation**: [**Interpret this. E.g., "We reject the null hypothesis ($p < 0.01$). Policies originating from Postal Code [Zip A] exhibit a significantly higher claim frequency compared to Postal Code [Zip B]. This highlights micro-geographical risk variations, suggesting opportunities for hyper-localized pricing strategies."**]
+  * **Result**: \[**State your p-value here**\]
 
-- **Claim Severity**:
-  - **Result**: [**State your p-value here**]
-  - **Conclusion**: [**Reject/Fail to Reject H0**]
-  - **Business Recommendation**: [**Interpret this.**]
+  * **Conclusion**: \[**Reject/Fail to Reject H0**\]
+
+  * **Business Recommendation**: \[**Interpret this. E.g., "We reject the null hypothesis (**$p < 0.01$**). Policies originating from Postal Code \[Zip A\] exhibit a significantly higher claim frequency compared to Postal Code \[Zip B\]. This highlights micro-geographical risk variations, suggesting opportunities for hyper-localized pricing strategies."**\]
+
+* **Claim Severity**:
+
+  * **Result**: \[**State your p-value here**\]
+
+  * **Conclusion**: \[**Reject/Fail to Reject H0**\]
+
+  * **Business Recommendation**: \[**Interpret this.**\]
 
 #### Hypothesis 3: $H_0$: There are no significant margin (profit) differences between zip codes.
 
-- **Result**: [**State your p-value here**]
-- **Conclusion**: [**Reject/Fail to Reject H0**]
-- **Business Recommendation**: [**Interpret this. E.g., "We reject the null hypothesis ($p < 0.01$). The average profit margin per policy in Postal Code [Zip A] (e.g., R500) is significantly different from Postal Code [Zip B] (e.g., R350). This suggests that some zip codes are inherently more profitable than others, providing insights for targeted marketing and premium adjustments to optimize profitability."**]
+* **Result**: \[**State your p-value here**\]
+
+* **Conclusion**: \[**Reject/Fail to Reject H0**\]
+
+* **Business Recommendation**: \[**Interpret this. E.g., "We reject the null hypothesis (**$p < 0.01$**). The average profit margin per policy in Postal Code \[Zip A\] (e.g., R500) is significantly different from Postal Code \[Zip B\] (e.g., R350). This suggests that some zip codes are inherently more profitable than others, providing insights for targeted marketing and premium adjustments to optimize profitability."**\]
 
 #### Hypothesis 4: $H_0$: There are no significant risk differences between Women and Men.
 
-- **Claim Frequency**:
+* **Claim Frequency**:
 
-  - **Result**: [**State your p-value here**]
-  - **Conclusion**: [**Reject/Fail to Reject H0**]
-  - **Business Recommendation**: [**Interpret this. E.g., "We fail to reject the null hypothesis ($p > 0.05$). The analysis does not provide statistically significant evidence of a difference in claim frequency between male and female policyholders. Therefore, current data does not support adjusting premiums based solely on gender for claim frequency."**]
+  * **Result**: \[**State your p-value here**\]
 
-- **Claim Severity**:
-  - **Result**: [**State your p-value here**]
-  - **Conclusion**: [**Reject/Fail to Reject H0**]
-  - **Business Recommendation**: [**Interpret this.**]
+  * **Conclusion**: \[**Reject/Fail to Reject H0**\]
+
+  * **Business Recommendation**: \[**Interpret this. E.g., "We fail to reject the null hypothesis (**$p > 0.05$**). The analysis does not provide statistically significant evidence of a difference in claim frequency between male and female policyholders. Therefore, current data does not support adjusting premiums based solely on gender for claim frequency."**\]
+
+* **Claim Severity**:
+
+  * **Result**: \[**State your p-value here**\]
+
+  * **Conclusion**: \[**Reject/Fail to Reject H0**\]
+
+  * **Business Recommendation**: \[**Interpret this.**\]
 
 ### 3.4 Summary of Findings and Recommendations
 
-[**Once all tests are run, provide a concise summary of the most impactful findings. Highlight which factors (province, zip code, gender) were found to be statistically significant risk/profit drivers and what specific actions AlphaCare should take based on these insights.**]
+\[**Once all tests are run, provide a concise summary of the most impactful findings. Highlight which factors (province, zip code, gender) were found to be statistically significant risk/profit drivers and what specific actions AlphaCare should take based on these insights.**\]
+
+## Task 4: Predictive Modeling
+
+This task focuses on building and evaluating machine learning models to predict key insurance risk metrics, forming the core of a dynamic, risk-based pricing system for AlphaCare Insurance Solutions. The primary objective was to develop a **Claim Severity Prediction Model**, estimating the `TotalClaims` amount for policies where a claim has occurred.
+
+### Methodology
+
+#### 1. Data Preparation
+
+The data used for modeling was the `MachineLearningRating_v3.csv` dataset, which underwent several preparation steps:
+
+* **Filtering for Claims**: The dataset was filtered to include only policies where `TotalClaims` was greater than zero, as the goal was to predict the *severity* of claims, given that they occurred.
+
+* **Feature Engineering**:
+
+  * A crucial feature, `VehicleAge`, was engineered by calculating the difference between a reference 'current' year (derived from the `TransactionDate` column) and the `RegistrationYear` of the vehicle. This provides a more direct measure of vehicle age at the time of transaction. The original `RegistrationYear` column was subsequently dropped.
+
+* **Handling Missing Data**:
+
+  * Numerical features with missing values were imputed using the **mean strategy**. This replaces missing numerical entries with the average value of their respective columns.
+
+  * Categorical features with missing values were imputed using the **most frequent strategy (mode)**, replacing missing entries with the most common category.
+
+* **Encoding Categorical Data**: All categorical features were converted into a numerical format suitable for machine learning models using **One-Hot Encoding**. This creates new binary columns for each category, preventing the models from assuming any ordinal relationship between categories.
+
+* **Train-Test Split**: The prepared dataset was split into training and testing sets with an **80:20 ratio** (`random_state=42` for reproducibility). The training set was used to build the models, and the unseen testing set was used to evaluate their generalization performance.
+
+* **Preprocessing Pipeline**: A `ColumnTransformer` and `Pipeline` were utilized to encapsulate the imputation and encoding steps. This ensures consistent preprocessing is applied to both training and testing data, and simplifies the overall model workflow.
+
+#### 2. Model Building and Evaluation (Claim Severity Prediction)
+
+Several regression models were implemented and evaluated to predict `TotalClaims` for policies with claims:
+
+* **Models Implemented**:
+
+  * **Linear Regression**: Served as a baseline model to understand linear relationships.
+
+  * **Decision Tree Regressor**: A single tree-based model.
+
+  * **Random Forest Regressor**: An ensemble method using multiple decision trees, known for its robustness and accuracy.
+
+  * **XGBoost Regressor**: A powerful Gradient Boosting Machine (GBM) widely recognized for its high performance in tabular data.
+
+* **Evaluation Metrics**:
+
+  * **Root Mean Squared Error (RMSE)**: Penalizes large prediction errors more heavily, providing a measure of the typical magnitude of the residuals (prediction errors). A lower RMSE indicates better performance.
+
+  * **R-squared (**$R^2$**)**: Represents the proportion of the variance in the dependent variable that is predictable from the independent variables. A higher $R^2$ indicates a better fit.
+
+* **Model Performance Comparison**:
+  (Once you run the script, you'll replace this with actual results from the console output. Here's a placeholder example format.)
+
+  | Model | RMSE (Rand) | R-squared | 
+   | ----- | ----- | ----- | 
+  | XGBoost Regressor | \[Value\] | \[Value\] | 
+  | Random Forest Regressor | \[Value\] | \[Value\] | 
+  | Decision Tree Regressor | \[Value\] | \[Value\] | 
+  | Linear Regression | \[Value\] | \[Value\] | 
+
+  *Initial observations typically indicate that ensemble models like **XGBoost Regressor** or **Random Forest Regressor** outperform simpler models like Linear Regression or a single Decision Tree for complex insurance data, yielding lower RMSE and higher R-squared values.*
+
+#### 3. Model Interpretability (SHAP - SHapley Additive exPlanations)
+
+To provide actionable insights beyond just predictive performance, SHAP values were computed for the best-performing model (likely XGBoost or Random Forest). SHAP is a game-theoretic approach that explains the output of any machine learning model by assigning an importance value to each feature for each prediction.
+
+* **Purpose**: SHAP helps to understand which features are most influential in predicting claim severity and how they impact the predictions, crucial for refining risk assessment and pricing strategies.
+
+* **Plots Generated**:
+
+  * **SHAP Summary Plot**: Visualizes the overall feature importance, showing the impact of each feature on the model's output and the distribution of SHAP values. This plot helps identify the top N most influential features.
+
+  * **SHAP Dependence Plot**: Illustrates how the prediction changes as a single feature varies across its range, often revealing non-linear relationships and interactions with other features.
+
+### Key Insights from Model Interpretability
+
+(You will populate this section with your actual findings from the SHAP plots. Here are examples of what you might find and how to interpret them in business terms.)
+
+Based on the SHAP analysis of the chosen model (e.g., XGBoost), the following features were identified as most influential in predicting **Claim Severity**:
+
+1. **`CustomValueEstimate`**: This was consistently found to be the most significant predictor. SHAP values indicate a strong positive correlation, meaning **higher estimated vehicle values lead to higher predicted claim amounts**. This provides quantitative evidence for adjusting premiums based on vehicle value.
+
+2. **`VehicleAge`**: Older vehicles tend to be associated with higher predicted claim amounts. For example, for every year older a vehicle is, the predicted claim amount may increase by 'X' Rand, holding other factors constant. This provides strong justification for age-based premium adjustments.
+
+3. **`Province_Gauteng` / `Province_[Other Province]`**: Consistent with EDA and Hypothesis Testing, geographical location remains a key driver. Policies in provinces like Gauteng show a higher positive impact on predicted claim severity compared to others, reinforcing the need for regionally differentiated pricing.
+
+4. **`TotalPremium`**: While `TotalPremium` is not an independent feature in a true risk model (it's often derived from risk), its influence here might reflect the existing premium structure's correlation with inherent risk. In a more advanced pricing framework, the goal would be to predict premium *given* risk.
+
+5. **`Make` / `Model`**: Specific vehicle makes and models contribute differently to claim severity. Certain manufacturers or models might have parts that are more expensive to replace, influencing the predicted claim amount.
+
+These insights provide concrete, data-backed evidence that AlphaCare Insurance Solutions can use to:
+
+* **Refine Pricing Models**: Directly incorporate `CustomValueEstimate`, `VehicleAge`, and `Province` as strong factors in risk-based premium calculations.
+
+* **Target Marketing**: Identify segments (e.g., specific vehicle types or age ranges) that have historically lower claim severity, potentially offering more attractive premiums to capture these low-risk clients.
+
+* **Product Development**: Consider developing specialized products for vehicle types or age groups that exhibit distinct risk profiles.
+
+## Conclusion and Future Work
+
+The predictive modeling phase successfully developed and evaluated models for claim severity, providing a robust understanding of the factors influencing claim amounts. The interpretability analysis with SHAP offers direct, actionable insights for AlphaCare's pricing and marketing strategies.
+
+Future work could extend this analysis by:
+
+* Developing a **Claim Probability Model** (binary classification) to predict if a claim will occur.
+
+* Integrating both claim probability and severity predictions into a comprehensive **Premium Optimization Framework** that also accounts for expense loading and profit margin.
+
+* Exploring more advanced imputation techniques or feature interactions.
+
+* Conducting hyperparameter tuning for the best-performing models to further optimize their performance.
+
+* Implementing A/B tests on new premium structures directly in the market to validate the model's impact.
