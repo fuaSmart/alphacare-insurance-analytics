@@ -37,14 +37,14 @@ missing_df = pd.DataFrame({'Missing Count': missing_values, 'Percentage (%)': mi
 print(missing_df[missing_df['Missing Count'] > 0].sort_values(by='Percentage (%)', ascending=False))
 
 # --- Convert 'TransactionDate' to datetime ---
-# Assuming 'TransactionDate' is the column with date information based on your description
+
 if 'TransactionDate' in df.columns:
     df['TransactionDate'] = pd.to_datetime(df['TransactionDate'])
     print("\n'TransactionDate' converted to datetime format.")
 else:
     print("\nWarning: 'TransactionDate' column not found. Date-based analysis might be affected.")
 
-# ---  Data Summarization: Descriptive Statistics ---
+# ---  Data Summarization ---
 print("\n--- Descriptive Statistics for Numerical Features ---")
 numerical_cols = df.select_dtypes(include=np.number).columns.tolist()
 
@@ -89,8 +89,9 @@ for col in categorical_cols_to_plot:
 # --- Bivariate or Multivariate Analysis ---
 print("\n--- Bivariate/Multivariate Analysis ---")
 
+
 # Overall Loss Ratio (TotalClaims / TotalPremium)
-# Handle potential division by zero for TotalPremium
+
 df['LossRatio'] = df.apply(lambda row: row['TotalClaims'] / row['TotalPremium'] if row['TotalPremium'] > 0 else 0, axis=1)
 print(f"\nOverall Portfolio Loss Ratio: {df['LossRatio'].mean():.2f}")
 
