@@ -5,26 +5,30 @@ import seaborn as sns
 import os
 
 # --- Configuration ---
-# If your data file is 'MachineLearningRating_v3.csv' in the data folder
-DATA_PATH = 'data/MachineLearningRating_v3.csv' # Adjust the filename here
-OUTPUT_PLOTS_DIR = 'plots/eda/'
+DATA_PATH = 'data/MachineLearningRating_v3.csv' 
+OUTPUT_PLOTS_DIR = 'plots/eda/' 
 if not os.path.exists(OUTPUT_PLOTS_DIR):
     os.makedirs(OUTPUT_PLOTS_DIR)
 
-# --- 1. Data Understanding & Loading ---
+# --- Data Understanding & Loading ---
 print("--- Data Loading & Initial Understanding ---")
 try:
-    df = pd.read_csv(DATA_PATH)
+    
+    df = pd.read_csv(DATA_PATH) 
     print(f"Dataset loaded successfully. Shape: {df.shape}")
     print("\nFirst 5 rows of the dataset:")
     print(df.head())
 except FileNotFoundError:
     print(f"Error: Data file not found at {DATA_PATH}. Please ensure it's downloaded and placed correctly.")
     exit()
+except Exception as e:
+    print(f"Error loading data: {e}")
+    print("Please check the file's content and try specifying the correct delimiter (e.g., delimiter='|' for pipe-separated).")
+    exit()
 
-# --- 2. Data Structure & Quality Assessment ---
+# --- Data Structure & Quality Assessment ---
 print("\n--- Data Structure & Types ---")
-print(df.info()) # Comprehensive info: non-null counts, dtypes
+print(df.info()) 
 
 print("\n--- Missing Values Assessment ---")
 missing_values = df.isnull().sum()
@@ -32,7 +36,7 @@ missing_percentage = (df.isnull().sum() / len(df)) * 100
 missing_df = pd.DataFrame({'Missing Count': missing_values, 'Percentage (%)': missing_percentage})
 print(missing_df[missing_df['Missing Count'] > 0].sort_values(by='Percentage (%)', ascending=False))
 
-# --- Convert 'transaction_date' to datetime ---
+# --- Convert 'TransactionDate' to datetime ---
 # Assuming 'TransactionDate' is the column with date information based on your description
 if 'TransactionDate' in df.columns:
     df['TransactionDate'] = pd.to_datetime(df['TransactionDate'])
@@ -40,10 +44,10 @@ if 'TransactionDate' in df.columns:
 else:
     print("\nWarning: 'TransactionDate' column not found. Date-based analysis might be affected.")
 
-# --- 3. Data Summarization: Descriptive Statistics ---
+# ---  Data Summarization: Descriptive Statistics ---
 print("\n--- Descriptive Statistics for Numerical Features ---")
 numerical_cols = df.select_dtypes(include=np.number).columns.tolist()
-# Filter for relevant financial columns for variability
+
 financial_cols = ['TotalPremium', 'TotalClaims', 'CalculatedPremiumPerTerm', 'SumInsured', 'CustomValueEstimate', 'CapitalOutstanding']
 present_financial_cols = [col for col in financial_cols if col in df.columns]
 
@@ -52,12 +56,12 @@ if present_financial_cols:
 else:
     print("No relevant financial columns found for descriptive statistics.")
 
-# --- 4. Univariate Analysis ---
+# --- Univariate Analysis ---
 print("\n--- Univariate Analysis: Distributions ---")
 
 # Histograms for numerical columns (select a few important ones)
 for col in ['TotalPremium', 'TotalClaims', 'Rating', 'CustomValueEstimate', 'Cylinders', 'NumberOfDoors', 'Kilowatts']:
-    if col in df.columns and df[col].dtype != object: # Ensure it's numerical and exists
+    if col in df.columns and df[col].dtype != object: 
         plt.figure(figsize=(8, 5))
         sns.histplot(df[col].dropna(), kde=True, bins=30, color='skyblue')
         plt.title(f'Distribution of {col}')
@@ -82,7 +86,7 @@ for col in categorical_cols_to_plot:
         plt.close()
         print(f"Generated bar chart for {col}.")
 
-# --- 5. Bivariate or Multivariate Analysis ---
+# --- Bivariate or Multivariate Analysis ---
 print("\n--- Bivariate/Multivariate Analysis ---")
 
 # Overall Loss Ratio (TotalClaims / TotalPremium)
@@ -128,12 +132,7 @@ if 'Gender' in df.columns:
     plt.close()
 
 
-<<<<<<< HEAD
-# Correlations and Associations 
-=======
-# Correlations and Associations (monthly changes TotalPremium vs TotalClaims by ZipCode)
-# This requires aggregation by month and zipcode first
->>>>>>> task-1
+
 if 'TransactionDate' in df.columns and 'PostalCode' in df.columns:
     monthly_data = df.set_index('TransactionDate').resample('M').agg(
         TotalPremium=('TotalPremium', 'sum'),
@@ -142,7 +141,7 @@ if 'TransactionDate' in df.columns and 'PostalCode' in df.columns:
 
     print("\nMonthly Trends (Overall):")
     print(monthly_data.head())
-    
+
     plt.figure(figsize=(12, 6))
     sns.lineplot(x='TransactionDate', y='TotalPremium', data=monthly_data, label='Total Premium', marker='o')
     sns.lineplot(x='TransactionDate', y='TotalClaims', data=monthly_data, label='Total Claims', marker='o')
@@ -178,12 +177,7 @@ for col in ['TotalPremium', 'TotalClaims', 'CustomValueEstimate']:
         plt.tight_layout()
         plt.savefig(os.path.join(OUTPUT_PLOTS_DIR, f'boxplot_{col}.png'))
         plt.close()
-        print(f"Generated box plot for {col}.")
+        print(f"Generated box plot for {col}.")# Handle potential division by zero for TotalPremium
 
-<<<<<<< HEAD
+
 print("\n--- EDA Analysis Complete. Check 'plots/eda/' directory for generated plots. ---")
-
-
-=======
-print("\n--- EDA Analysis Complete. Check 'plots/eda/' directory for generated plots. ---")
->>>>>>> task-1
