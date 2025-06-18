@@ -24,7 +24,7 @@ except Exception as e:
 # --- Data Preprocessing for Metrics ---
 print("\n--- Data Preprocessing for Metrics ---")
 
-# Convert 'TransactionDate' to datetime if not already done in EDA
+# Convert 'TransactionDate' to datetime
 if 'TransactionDate' in df.columns:
     df['TransactionDate'] = pd.to_datetime(df['TransactionDate'])
     print("'TransactionDate' converted to datetime format.")
