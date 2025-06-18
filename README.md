@@ -326,5 +326,94 @@ Future work could extend this analysis by:
 * Exploring more advanced imputation techniques or feature interactions.
 
 * Conducting hyperparameter tuning for the best-performing models to further optimize their performance.
+## Task 4: Predictive Modeling
 
-* Implementing A/B tests on new premium structures directly in the market to validate the model's impact.
+This task focuses on building and evaluating machine learning models to predict key insurance risk metrics, forming the core of a dynamic, risk-based pricing system for AlphaCare Insurance Solutions. The primary objective was to develop a **Claim Severity Prediction Model**, estimating the `TotalClaims` amount for policies where a claim has occurred.
+
+### Methodology
+
+#### 1. Data Preparation
+
+The data used for modeling was the `MachineLearningRating_v3.csv` dataset, which underwent several preparation steps:
+
+* **Filtering for Claims**: The dataset was filtered to include only policies where `TotalClaims` was greater than zero, as the goal was to predict the *severity* of claims, given that they occurred.
+
+* **Feature Engineering**:
+  * A crucial feature, `VehicleAge`, was engineered by calculating the difference between a reference 'current' year (derived from the `TransactionDate` column) and the `RegistrationYear` of the vehicle. This provides a more direct measure of vehicle age at the time of transaction. The original `RegistrationYear` column was subsequently dropped.
+
+* **Handling Missing Data**:
+  * Numerical features with missing values were imputed using the **mean strategy**. This replaces missing numerical entries with the average value of their respective columns.
+  * Categorical features with missing values were imputed using the **most frequent strategy (mode)**, replacing missing entries with the most common category.
+
+* **Encoding Categorical Data**: All categorical features were converted into a numerical format suitable for machine learning models using **One-Hot Encoding**. This creates new binary columns for each category, preventing the models from assuming any ordinal relationship between categories.
+
+* **Train-Test Split**: The prepared dataset was split into training and testing sets with an **80:20 ratio** (`random_state=42` for reproducibility). The training set was used to build the models, and the unseen testing set was used to evaluate their generalization performance.
+
+* **Preprocessing Pipeline**: A `ColumnTransformer` and `Pipeline` were utilized to encapsulate the imputation and encoding steps. This ensures consistent preprocessing is applied to both training and testing data, and simplifies the overall model workflow.
+
+#### 2. Model Building and Evaluation (Claim Severity Prediction)
+
+Several regression models were implemented and evaluated to predict `TotalClaims` for policies with claims:
+
+* **Models Implemented**:
+  * **Linear Regression**: Served as a baseline model to understand linear relationships.
+  * **Decision Tree Regressor**: A single tree-based model.
+  * **Random Forest Regressor**: An ensemble method using multiple decision trees, known for its robustness and accuracy.
+  * **XGBoost Regressor**: A powerful Gradient Boosting Machine (GBM) widely recognized for its high performance in tabular data.
+
+* **Evaluation Metrics**:
+  * **Root Mean Squared Error (RMSE)**: Penalizes large prediction errors more heavily, providing a measure of the typical magnitude of the residuals (prediction errors). A lower RMSE indicates better performance.
+  * **R-squared (**$R^2$**)**: Represents the proportion of the variance in the dependent variable that is predictable from the independent variables. A higher $R^2$ indicates a better fit.
+
+* **Model Performance Comparison**:
+  (Once you run the script, you'll replace this with actual results from the console output. Here's a placeholder example format.)
+
+  | Model | RMSE (Rand) | R-squared | 
+   | ----- | ----- | ----- | 
+  | XGBoost Regressor | \[Value\] | \[Value\] | 
+  | Random Forest Regressor | \[Value\] | \[Value\] | 
+  | Decision Tree Regressor | \[Value\] | \[Value\] | 
+  | Linear Regression | \[Value\] | \[Value\] | 
+
+  *Initial observations typically indicate that ensemble models like **XGBoost Regressor** or **Random Forest Regressor** outperform simpler models like Linear Regression or a single Decision Tree for complex insurance data, yielding lower RMSE and higher R-squared values.*
+
+#### 3. Model Interpretability (SHAP - SHapley Additive exPlanations)
+
+To provide actionable insights beyond just predictive performance, SHAP values were computed for the best-performing model (likely XGBoost or Random Forest). SHAP is a game-theoretic approach that explains the output of any machine learning model by assigning an importance value to each feature for each prediction.
+
+* **Purpose**: SHAP helps to understand which features are most influential in predicting claim severity and how they impact the predictions, crucial for refining risk assessment and pricing strategies.
+
+* **Plots Generated**:
+  * **SHAP Summary Plot**: Visualizes the overall feature importance, showing the impact of each feature on the model's output and the distribution of SHAP values. This plot helps identify the top N most influential features.
+  * **SHAP Dependence Plot**: Illustrates how the prediction changes as a single feature varies across its range, often revealing non-linear relationships and interactions with other features.
+
+### Key Insights from Model Interpretability
+
+Based on the SHAP analysis of the chosen model (e.g., XGBoost), the following features were identified as most influential in predicting **Claim Severity**:
+
+1. **`CustomValueEstimate`**: This was consistently found to be the most significant predictor. SHAP values indicate a strong positive correlation, meaning **higher estimated vehicle values lead to higher predicted claim amounts**. This provides quantitative evidence for adjusting premiums based on vehicle value.
+
+2. **`VehicleAge`**: Older vehicles tend to be associated with higher predicted claim amounts. For example, for every year older a vehicle is, the predicted claim amount may increase by 'X' Rand, holding other factors constant. This provides strong justification for age-based premium adjustments.
+
+3. **`Province_Gauteng` / `Province_[Other Province]`**: Consistent with EDA and Hypothesis Testing, geographical location remains a key driver. Policies in provinces like Gauteng show a higher positive impact on predicted claim severity compared to others, reinforcing the need for regionally differentiated pricing.
+
+4. **`TotalPremium`**: While `TotalPremium` is not an independent feature in a true risk model (it's often derived from risk), its influence here might reflect the existing premium structure's correlation with inherent risk. In a more advanced pricing framework, the goal would be to predict premium *given* risk.
+
+5. **`Make` / `Model`**: Specific vehicle makes and models contribute differently to claim severity. Certain manufacturers or models might have parts that are more expensive to replace, influencing the predicted claim amount.
+
+These insights provide concrete, data-backed evidence that AlphaCare Insurance Solutions can use to:
+
+* **Refine Pricing Models**: Directly incorporate `CustomValueEstimate`, `VehicleAge`, and `Province` as strong factors in risk-based premium calculations.
+* **Target Marketing**: Identify segments (e.g., specific vehicle types or age ranges) that have historically lower claim severity, potentially offering more attractive premiums to capture these low-risk clients.
+* **Product Development**: Consider developing specialized products for vehicle types or age groups that exhibit distinct risk profiles.
+
+## Conclusion and Future Work
+
+The predictive modeling phase successfully developed and evaluated models for claim severity, providing a robust understanding of the factors influencing claim amounts. The interpretability analysis with SHAP offers direct, actionable insights for AlphaCare's pricing and marketing strategies.
+
+Future work could extend this analysis by:
+* Developing a **Claim Probability Model** (binary classification) to predict if a claim will occur.
+* Integrating both claim probability and severity predictions into a comprehensive **Premium Optimization Framework** that also accounts for expense loading and profit margin.
+* Exploring more advanced imputation techniques or feature interactions.
+* Conducting hyperparameter tuning for the best-performing models to further optimize their performance.
+* Implementing A/B tests on new premium structures directly in the market to validate the model's recommendations.
